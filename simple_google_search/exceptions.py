@@ -1,0 +1,2 @@
+class SimpleGoogleSearchException(Exception):
+    pass

@@ -1,23 +1,9 @@
-import os
 from flask import abort, Flask, jsonify, request
-from .exceptions import NotDefinedEnvironmentVariable
 from .logger import logger
 from .google_search import GoogleSearch
 from .validators import get_validator
 
 app = Flask(__name__)
-
-
-def init_google_search():
-    api_key = os.getenv('API_KEY')
-
-    if not api_key:
-        raise NotDefinedEnvironmentVariable('API_KEY must be set.')
-
-    return GoogleSearch(api_key)
-
-
-google_search = init_google_search()
 
 
 @app.before_request
@@ -40,11 +26,11 @@ def validate():
         })
 
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 def search():
     req_params = request.get_json()
 
-    result = google_search.call(req_params['query'])
+    result = GoogleSearch.search(req_params['query'])
 
     return jsonify({
         'result': result,
