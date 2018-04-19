@@ -22,7 +22,7 @@ def validate():
     if not validation_result:
         return abort(422, {
             'status': 'NG',
-            'errors': validator.errors,
+            'errors': validator.errors if validator else 'Not found endpoint access.',
         })
 
 
@@ -30,10 +30,10 @@ def validate():
 def search():
     req_params = request.get_json()
 
-    result = GoogleSearch.search(req_params['query'])
+    results = GoogleSearch.search(req_params['query'])
 
     return jsonify({
-        'result': result,
+        'results': results,
     })
 
 

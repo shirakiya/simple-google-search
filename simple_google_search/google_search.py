@@ -11,7 +11,8 @@ class GoogleSearch:
 
     @classmethod
     def _extract_title(cls, card_bs):
-        return card_bs.find('h3').string
+        title_bs = card_bs.find('h3')
+        return title_bs.string if title_bs else None
 
     @classmethod
     def _extract_description(cls, card_bs):
