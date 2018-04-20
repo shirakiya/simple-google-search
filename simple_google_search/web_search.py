@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 
 
-class GoogleSearch:
+class WebSearch:
 
     SEARCH_URL = 'https://www.google.co.jp/search?q={}'
 

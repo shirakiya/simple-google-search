@@ -1,9 +1,26 @@
+import os
 from flask import abort, Flask, jsonify, request
+from .exceptions import NotDefinedEnviromentVariable
 from .logger import logger
-from .google_search import GoogleSearch
+from .custom_search import CustomSearch
+from .web_search import WebSearch
 from .validators import get_validator
 
+
+def get_env(key):
+    env = os.getenv(key)
+
+    if not env:
+        raise NotDefinedEnviromentVariable('Environment variable "{}" is required.'.format(key))
+
+    return env
+
+
+api_key = get_env('API_KEY')
+cse_id = get_env('CSE_ID')
+
 app = Flask(__name__)
+custom_search = CustomSearch(api_key, cse_id)
 
 
 @app.before_request
@@ -30,7 +47,13 @@ def validate():
 def search():
     req_params = request.get_json()
 
-    results = GoogleSearch.search(req_params['query'])
+    search_type = req_params.get('type', 'web')
+    query = req_params['query']
+
+    if search_type == 'web':
+        results = WebSearch.search(query)
+    elif search_type == 'custom':
+        results = custom_search.search(query)
 
     return jsonify({
         'results': results,
